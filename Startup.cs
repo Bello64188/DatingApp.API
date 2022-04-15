@@ -30,6 +30,7 @@ namespace DatingApp.API
 services.AddDbContext<Data.AppDbContext>(option=>option.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddControllers();
+            services.CorsConfiguration();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "DatingApp.API", Version = "v1" });
@@ -47,7 +48,7 @@ services.AddDbContext<Data.AppDbContext>(option=>option.UseSqlite(Configuration.
             }
 
             app.UseHttpsRedirection();
-
+            app.UseCors("policy");
             app.UseRouting();
 
             app.UseAuthorization();
