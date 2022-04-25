@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DatingApp.API.Service;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -27,18 +28,23 @@ namespace DatingApp.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-services.AddDbContext<Data.AppDbContext>(option=>option.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
-
-            services.AddControllers();
+            services.AddScoped<IAuthManager,AuthManager>();
+            services.AddDbContext<Data.AppDbContext>(option=>option.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+           services.IdentityConfiguration();
             services.CorsConfiguration();
+            services.JwtConfiguration(Configuration);
+            services.AddAuthentication();
+            services.AddAuthorization();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "DatingApp.API", Version = "v1" });
             });
+             services.AddControllers();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
         {
             if (env.IsDevelopment())
             {
@@ -46,11 +52,11 @@ services.AddDbContext<Data.AppDbContext>(option=>option.UseSqlite(Configuration.
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "DatingApp.API v1"));
             }
-
+            
             app.UseHttpsRedirection();
             app.UseCors("policy");
             app.UseRouting();
-
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
