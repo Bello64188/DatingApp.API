@@ -10,7 +10,7 @@ namespace DatingApp.API.Controllers
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
 
-    [Route("api/[controller]")]
+    [Route("api/[controller]"),Produces("application/json")]
     [ApiController]
     public class AccountController : ControllerBase
     {
