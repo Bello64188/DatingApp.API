@@ -2,6 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DatingApp.API.Data;
+using DatingApp.API.GenericRepository;
+using DatingApp.API.IGenericRepository;
 using DatingApp.API.Service;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -13,6 +16,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using Newtonsoft.Json;
 
 namespace DatingApp.API
 {
@@ -29,9 +33,11 @@ namespace DatingApp.API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddScoped<IAuthManager,AuthManager>();
+            services.AddScoped(typeof(IRepository<>),typeof(Repository<>));
             services.AddDbContext<Data.AppDbContext>(option=>option.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-           services.IdentityConfiguration();
+            services.AddTransient<Seed>();
+            services.IdentityConfiguration();
             services.CorsConfiguration();
             services.JwtConfiguration(Configuration);
             services.AddAuthentication();
@@ -40,11 +46,13 @@ namespace DatingApp.API
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "DatingApp.API", Version = "v1" });
             });
-             services.AddControllers();
+             services.AddControllers().AddNewtonsoftJson(opt=>{
+                 opt.SerializerSettings.ReferenceLoopHandling=ReferenceLoopHandling.Ignore;
+             });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory, Seed seeder)
         {
             if (env.IsDevelopment())
             {
@@ -52,7 +60,7 @@ namespace DatingApp.API
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "DatingApp.API v1"));
             }
-            
+           // seeder.SeedUsers();
             app.UseHttpsRedirection();
             app.UseCors("policy");
             app.UseRouting();

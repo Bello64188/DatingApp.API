@@ -16,7 +16,38 @@ namespace DatingApp.API.Migrations
             modelBuilder
                 .HasAnnotation("ProductVersion", "5.0.16");
 
-            modelBuilder.Entity("DatingApp.API.Data.UserApi", b =>
+            modelBuilder.Entity("DatingApp.API.Data.Photo", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("dateAdd")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("description")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("isMain")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("url")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("userDataId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("userDataId1")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("id");
+
+                    b.HasIndex("userDataId1");
+
+                    b.ToTable("Photos");
+                });
+
+            modelBuilder.Entity("DatingApp.API.Data.UserData", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("TEXT");
@@ -34,12 +65,6 @@ namespace DatingApp.API.Migrations
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("INTEGER");
-
-                    b.Property<string>("FirstName")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("LastName")
-                        .HasColumnType("TEXT");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("INTEGER");
@@ -72,6 +97,42 @@ namespace DatingApp.API.Migrations
 
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("city")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("country")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("created")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("dateOfBirth")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("gender")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("interests")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("introduction")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("knownAs")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("lastActive")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("lookingFor")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("name")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("password")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
@@ -128,15 +189,15 @@ namespace DatingApp.API.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "83955602-9b70-4293-914d-79666a280141",
-                            ConcurrencyStamp = "7febf39f-f99e-4df0-8997-90161121b998",
+                            Id = "9edfe3f4-a7b5-40d9-adb4-be92554bc652",
+                            ConcurrencyStamp = "e7f1b67e-d952-4657-ae13-e15581bb5281",
                             Name = "User",
                             NormalizedName = "USER"
                         },
                         new
                         {
-                            Id = "8a30fbc7-0fda-4ed2-bf30-fdf4646340d2",
-                            ConcurrencyStamp = "7d46df1e-3788-4cad-810c-c6439963e8da",
+                            Id = "a88d71d2-d978-441a-a9ef-2886227986fb",
+                            ConcurrencyStamp = "3097ec45-f4f4-455c-9037-3c1c357885c8",
                             Name = "Administrator",
                             NormalizedName = "ADMINISTRATOR"
                         });
@@ -244,6 +305,15 @@ namespace DatingApp.API.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
+            modelBuilder.Entity("DatingApp.API.Data.Photo", b =>
+                {
+                    b.HasOne("DatingApp.API.Data.UserData", "userData")
+                        .WithMany("photos")
+                        .HasForeignKey("userDataId1");
+
+                    b.Navigation("userData");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -255,7 +325,7 @@ namespace DatingApp.API.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("DatingApp.API.Data.UserApi", null)
+                    b.HasOne("DatingApp.API.Data.UserData", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -264,7 +334,7 @@ namespace DatingApp.API.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("DatingApp.API.Data.UserApi", null)
+                    b.HasOne("DatingApp.API.Data.UserData", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -279,7 +349,7 @@ namespace DatingApp.API.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("DatingApp.API.Data.UserApi", null)
+                    b.HasOne("DatingApp.API.Data.UserData", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -288,11 +358,16 @@ namespace DatingApp.API.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("DatingApp.API.Data.UserApi", null)
+                    b.HasOne("DatingApp.API.Data.UserData", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("DatingApp.API.Data.UserData", b =>
+                {
+                    b.Navigation("photos");
                 });
 #pragma warning restore 612, 618
         }

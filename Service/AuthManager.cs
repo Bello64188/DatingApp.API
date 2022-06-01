@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using DatingApp.API.Data;
 using DatingApp.API.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
@@ -15,17 +16,22 @@ namespace DatingApp.API.Service
 {
     public class AuthManager : IAuthManager
     {
-        private readonly UserManager<UserApi> _userManager;
+        private readonly UserManager<UserData> _userManager;
         private readonly IConfiguration _configuration;
-        private UserApi _user;
+        private readonly AppDbContext _cxt;
+        private readonly DbSet<UserData> _db;
+        private UserData _user;
+      
         
         
         
 
-        public AuthManager(UserManager<UserApi> userManager, IConfiguration configuration)
+        public AuthManager(UserManager<UserData> userManager, IConfiguration configuration,AppDbContext context)
       {
           _userManager=userManager;
           _configuration= configuration;
+          _cxt=context;
+          _db=_cxt.Set<UserData>();
       }
         
         
@@ -39,7 +45,7 @@ namespace DatingApp.API.Service
 
         private JwtSecurityToken GetTokenOption(SigningCredentials signingCredential, List<Claim> claim)
         {
-            var expiration = DateTime.Now.AddMinutes(Convert.ToDouble(_configuration.GetSection("Lifetime").Value));
+            var expiration = DateTime.Now.AddDays(Convert.ToDouble(_configuration.GetSection("Lifetime").Value));
             var jwtsetting = _configuration.GetSection("Jwt");
             var token = new JwtSecurityToken(
 
@@ -61,8 +67,11 @@ namespace DatingApp.API.Service
 
         private async Task<List<Claim>> GetClaims()
         {
+            var user = new UserData();
             var claim = new List<Claim>{
-                new Claim(ClaimTypes.Name, _user.UserName)
+                new Claim("name", _user.name),
+                new Claim("id", _user.Id.ToString()),
+                
             };
              var userRoles = await _userManager.GetRolesAsync(_user);
              foreach (var role in userRoles)
@@ -75,7 +84,7 @@ namespace DatingApp.API.Service
         public async Task<bool> ValidateUser(LoginDTO loginDTO)
         {
             _user= await _userManager.FindByNameAsync(loginDTO.Email);
-            return (_user != null && await _userManager.CheckPasswordAsync(_user,loginDTO.Password));
+            return (_user != null && await _userManager.CheckPasswordAsync(_user,loginDTO.password));
         }
     }
 }
