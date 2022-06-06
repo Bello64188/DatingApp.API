@@ -28,6 +28,7 @@ namespace DatingApp.API.Configuration.MapperInitializer
             });
 
             CreateMap<Photo, PhotoDto>();
+            CreateMap<UpdateDTO,UserData>();
         }
     }
 }

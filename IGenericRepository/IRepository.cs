@@ -10,6 +10,7 @@ namespace DatingApp.API.IGenericRepository
          Task<UserData> GetUser(string id);
          void Add(T entity);
          void Delete(T entity);
+         void Update(T entity);
          Task<bool>  SaveAll();
     }
 }

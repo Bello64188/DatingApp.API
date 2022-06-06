@@ -41,6 +41,23 @@ namespace Name.Controllers
 
             return Ok(userMap);
         }
-       
-    }
+        [HttpPut("{id}")]
+        [ProducesResponseType(statusCode:StatusCodes.Status204NoContent)]
+        [ProducesResponseType(statusCode:StatusCodes.Status400BadRequest)]
+       public async Task<IActionResult> UpDateUser([FromBody] UpdateDTO update , string id){
+         if (!ModelState.IsValid || string.IsNullOrEmpty(id))
+         
+             return BadRequest(ModelState);
+         
+           var user = await _repository.GetUser(id);
+           if (user==null)
+           
+               return BadRequest($"User of id {id} is not found");
+           
+           _map.Map(update,user);
+           _repository.Update(user);
+           await _repository.SaveAll();
+           return NoContent();
+        }
+}
 }

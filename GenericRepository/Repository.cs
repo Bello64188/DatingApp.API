@@ -41,5 +41,10 @@ namespace DatingApp.API.GenericRepository
         {
             return await _context.SaveChangesAsync()> 0;
         }
+
+        public void Update(T entity)
+        {
+            _context.Update(entity);
+        }
     }
 }
