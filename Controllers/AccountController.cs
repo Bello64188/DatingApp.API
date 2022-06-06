@@ -10,26 +10,27 @@ namespace DatingApp.API.Controllers
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
 
-    [Route("api/[controller]"),Produces("application/json")]
+    [Route("api/[controller]"), Produces("application/json")]
     [ApiController]
     public class AccountController : ControllerBase
     {
-        private readonly UserManager<UserApi> _userManager;
+        private readonly UserManager<UserData> _userManager;
         private readonly IAuthManager _authManager;
         private readonly IMapper _map;
         private readonly ILogger<AccountController> _logger;
 
-        public AccountController(UserManager<UserApi> userManager, IAuthManager authManager, IMapper mapper, ILogger<AccountController> logger)
+        public AccountController(UserManager<UserData> userManager, IAuthManager authManager, IMapper mapper, ILogger<AccountController> logger)
         {
             _userManager= userManager;
             _authManager= authManager;
             _map=mapper;
             _logger=logger;
         }
-        [HttpPost]
+       [HttpPost]
+       [Route("register")]
         [ProducesResponseType(StatusCodes.Status202Accepted)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [Route("register")]
+        
         public async Task<IActionResult> Register([FromBody] UserDTO userDTO)
         {
             _logger.LogInformation($"attempt to resgister{userDTO.Email}");
@@ -37,9 +38,9 @@ namespace DatingApp.API.Controllers
             {
                 return ValidationProblem(ModelState);
             }
-            var user = _map.Map<UserApi>(userDTO);
+            var user = _map.Map<UserData>(userDTO);
             user.UserName= userDTO.Email;
-            var result = await _userManager.CreateAsync(user,userDTO.Password);
+            var result = await _userManager.CreateAsync(user,userDTO.password);
             if (!result.Succeeded)
             {
                 foreach (var error in result.Errors)
@@ -48,15 +49,16 @@ namespace DatingApp.API.Controllers
                 }
                 return BadRequest(ModelState);
             }
-            await _userManager.AddToRolesAsync(user,userDTO.Roles);
+            // await _userManager.AddToRolesAsync(user,userDTO.Roles);
             return Accepted();
         }
 
         [HttpPost]
+        [Route("login")]
         [ProducesResponseType(StatusCodes.Status202Accepted)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [Route("login")]
+        
         public async Task<IActionResult> Login([FromBody] LoginDTO loginDTO)
         {
             _logger.LogInformation($"Login Attempt for{loginDTO.Email}");

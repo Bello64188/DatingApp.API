@@ -1,26 +1,28 @@
+using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 
 namespace DatingApp.API.Models
 {
-    public class LoginDTO
-    {
-        [Required(ErrorMessage ="Please Enter your Email Address")]
-        public string Email { get; set; }
-        [Required(ErrorMessage ="Please Enter Strong Password")]
-        public string Password { get; set; }
-    }
     public class UserDTO:LoginDTO
     {  
       
-        public string FirstName { get; set; }
-        
-        public string LastName { get; set; }
-        
-        public string PhoneNumber { get; set; }
+        public string name { get; set; }
+        public string gender { get; set; }         
+        public DateTime dateOfBirth { get; set; }
+        public string knownAs { get; set; }        
+        public DateTime created { get; set; }
+        public DateTime lastActive { get; set; }       
+        public string interests { get; set; }
+        public string city { get; set; }
+        public string country { get; set; }
+        public string phoneNumber { get; set; }
         public ICollection<string> Roles { get; set; }
         
-        
+        public UserDTO()
+        {
+            created= DateTime.Now;
+            lastActive= DateTime.Now;
+        }
         
         
     }
