@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using DatingApp.API.Data;
 using DatingApp.API.IGenericRepository;
@@ -25,9 +26,27 @@ namespace DatingApp.API.GenericRepository
           _context.Remove(entity);
         }
 
+       
+        public async Task<Photo> GetMainPhotoForUser(string userid)
+        {
+           var user = await _context.Photos.Where(u=>u.userDataId==userid).FirstOrDefaultAsync(i=>i.isMain);
+           return user;
+        }
+
+        public Task<Photo> GetPhoto(int id)
+        {
+            var photo = _context.Photos.FirstOrDefaultAsync(u=>u.id == id);
+                  return photo;
+        }       
+
         public async Task<UserData> GetUser(string id)
         {
             var user = await _context.UserDatas.Include(p=>p.photos).FirstOrDefaultAsync(i=>i.Id==id);
+            return user;
+        }
+        public async Task<UserData> GetEmail(string email)
+        {
+             var user = await _context.UserDatas.Include(p=>p.photos).FirstOrDefaultAsync(i=>i.Email==email);
             return user;
         }
 
@@ -45,6 +64,17 @@ namespace DatingApp.API.GenericRepository
         public void Update(T entity)
         {
             _context.Update(entity);
+        }
+
+        public async Task<UserData> Login(string email, string password)
+        {
+            var user = await _context.UserDatas.Include(p=>p.photos).FirstOrDefaultAsync(h=>h.Email==email);
+            if (user==null)
+            {
+                return null;
+
+            }
+            return user;
         }
     }
 }

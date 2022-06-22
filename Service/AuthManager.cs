@@ -21,6 +21,7 @@ namespace DatingApp.API.Service
         private readonly AppDbContext _cxt;
         private readonly DbSet<UserData> _db;
         private UserData _user;
+        
       
         
         
@@ -40,12 +41,13 @@ namespace DatingApp.API.Service
            var claim = await GetClaims();
            var signingCredential= GetSigningCredentials();
            var token = GetTokenOption(signingCredential,claim);
+                   
            return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
         private JwtSecurityToken GetTokenOption(SigningCredentials signingCredential, List<Claim> claim)
         {
-            var expiration = DateTime.Now.AddDays(Convert.ToDouble(_configuration.GetSection("Lifetime").Value));
+            var expiration = DateTime.Now.AddHours(Convert.ToDouble(_configuration.GetSection("Lifetime").Value));
             var jwtsetting = _configuration.GetSection("Jwt");
             var token = new JwtSecurityToken(
 
@@ -71,6 +73,7 @@ namespace DatingApp.API.Service
             var claim = new List<Claim>{
                 new Claim("name", _user.name),
                 new Claim("id", _user.Id.ToString()),
+            
                 
             };
              var userRoles = await _userManager.GetRolesAsync(_user);
@@ -83,6 +86,7 @@ namespace DatingApp.API.Service
 
         public async Task<bool> ValidateUser(LoginDTO loginDTO)
         {
+
             _user= await _userManager.FindByNameAsync(loginDTO.Email);
             return (_user != null && await _userManager.CheckPasswordAsync(_user,loginDTO.password));
         }

@@ -31,18 +31,18 @@ namespace DatingApp.API.Migrations
                     b.Property<bool>("isMain")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("publicId")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("url")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("userDataId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("userDataId1")
+                    b.Property<string>("userDataId")
                         .HasColumnType("TEXT");
 
                     b.HasKey("id");
 
-                    b.HasIndex("userDataId1");
+                    b.HasIndex("userDataId");
 
                     b.ToTable("Photos");
                 });
@@ -132,9 +132,6 @@ namespace DatingApp.API.Migrations
                     b.Property<string>("name")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("password")
-                        .HasColumnType("TEXT");
-
                     b.HasKey("Id");
 
                     b.HasIndex("NormalizedEmail")
@@ -189,15 +186,15 @@ namespace DatingApp.API.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "9edfe3f4-a7b5-40d9-adb4-be92554bc652",
-                            ConcurrencyStamp = "e7f1b67e-d952-4657-ae13-e15581bb5281",
+                            Id = "7ec7fad4-9e8b-4d84-be10-a268a7924a69",
+                            ConcurrencyStamp = "037889b7-3304-4a91-b6bc-594e9dff59d1",
                             Name = "User",
                             NormalizedName = "USER"
                         },
                         new
                         {
-                            Id = "a88d71d2-d978-441a-a9ef-2886227986fb",
-                            ConcurrencyStamp = "3097ec45-f4f4-455c-9037-3c1c357885c8",
+                            Id = "3159e6be-35cf-4617-9326-653b5f21bee3",
+                            ConcurrencyStamp = "0277c678-fcd4-42b8-a2d7-0552a7fe6ca9",
                             Name = "Administrator",
                             NormalizedName = "ADMINISTRATOR"
                         });
@@ -309,7 +306,7 @@ namespace DatingApp.API.Migrations
                 {
                     b.HasOne("DatingApp.API.Data.UserData", "userData")
                         .WithMany("photos")
-                        .HasForeignKey("userDataId1");
+                        .HasForeignKey("userDataId");
 
                     b.Navigation("userData");
                 });

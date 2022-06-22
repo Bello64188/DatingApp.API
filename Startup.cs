@@ -37,6 +37,7 @@ namespace DatingApp.API
             services.AddDbContext<Data.AppDbContext>(option=>option.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddTransient<Seed>();
+            services.Configure<CloudinarySettings>(Configuration.GetSection("CloudinarySettings"));
             services.IdentityConfiguration();
             services.CorsConfiguration();
             services.JwtConfiguration(Configuration);
@@ -48,6 +49,7 @@ namespace DatingApp.API
             });
              services.AddControllers().AddNewtonsoftJson(opt=>{
                  opt.SerializerSettings.ReferenceLoopHandling=ReferenceLoopHandling.Ignore;
+                
              });
         }
 
@@ -60,7 +62,7 @@ namespace DatingApp.API
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "DatingApp.API v1"));
             }
-           // seeder.SeedUsers();
+            //seeder.SeedUsers();
             app.UseHttpsRedirection();
             app.UseCors("policy");
             app.UseRouting();

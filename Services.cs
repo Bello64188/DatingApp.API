@@ -14,9 +14,11 @@ namespace DatingApp.API
         public static void CorsConfiguration( this IServiceCollection services){
          
          services.AddCors(op=>op.AddPolicy("policy",p=>{
-            p.AllowAnyOrigin()
+            p.WithOrigins("http://localhost:4200")
             .AllowAnyHeader()
-            .AllowAnyMethod();
+            .AllowAnyMethod()
+            .AllowCredentials();
+            
             
             
          }));
