@@ -15,7 +15,7 @@ namespace DatingApp.API.Data
         }
        
         public string name { get; set; }        
-        public string password { get; set; }          
+                
         public string gender { get; set; }
         public DateTime dateOfBirth { get; set; }
         public string knownAs { get; set; }        

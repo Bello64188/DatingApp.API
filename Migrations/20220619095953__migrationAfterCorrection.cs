@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace DatingApp.API.Migrations
 {
-    public partial class _newMigration : Migration
+    public partial class _migrationAfterCorrection : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -27,7 +27,6 @@ namespace DatingApp.API.Migrations
                 {
                     Id = table.Column<string>(type: "TEXT", nullable: false),
                     name = table.Column<string>(type: "TEXT", nullable: true),
-                    password = table.Column<string>(type: "TEXT", nullable: true),
                     gender = table.Column<string>(type: "TEXT", nullable: true),
                     dateOfBirth = table.Column<DateTime>(type: "TEXT", nullable: false),
                     knownAs = table.Column<string>(type: "TEXT", nullable: true),
@@ -187,15 +186,15 @@ namespace DatingApp.API.Migrations
                     description = table.Column<string>(type: "TEXT", nullable: true),
                     dateAdd = table.Column<DateTime>(type: "TEXT", nullable: false),
                     isMain = table.Column<bool>(type: "INTEGER", nullable: false),
-                    userDataId1 = table.Column<string>(type: "TEXT", nullable: true),
-                    userDataId = table.Column<int>(type: "INTEGER", nullable: false)
+                    publicId = table.Column<string>(type: "TEXT", nullable: true),
+                    userDataId = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Photos", x => x.id);
                     table.ForeignKey(
-                        name: "FK_Photos_AspNetUsers_userDataId1",
-                        column: x => x.userDataId1,
+                        name: "FK_Photos_AspNetUsers_userDataId",
+                        column: x => x.userDataId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
@@ -204,12 +203,12 @@ namespace DatingApp.API.Migrations
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "9edfe3f4-a7b5-40d9-adb4-be92554bc652", "e7f1b67e-d952-4657-ae13-e15581bb5281", "User", "USER" });
+                values: new object[] { "7ec7fad4-9e8b-4d84-be10-a268a7924a69", "037889b7-3304-4a91-b6bc-594e9dff59d1", "User", "USER" });
 
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "a88d71d2-d978-441a-a9ef-2886227986fb", "3097ec45-f4f4-455c-9037-3c1c357885c8", "Administrator", "ADMINISTRATOR" });
+                values: new object[] { "3159e6be-35cf-4617-9326-653b5f21bee3", "0277c678-fcd4-42b8-a2d7-0552a7fe6ca9", "Administrator", "ADMINISTRATOR" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -249,9 +248,9 @@ namespace DatingApp.API.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Photos_userDataId1",
+                name: "IX_Photos_userDataId",
                 table: "Photos",
-                column: "userDataId1");
+                column: "userDataId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
