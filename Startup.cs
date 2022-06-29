@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DatingApp.API.Configuration.Filter;
 using DatingApp.API.Data;
 using DatingApp.API.GenericRepository;
 using DatingApp.API.IGenericRepository;
@@ -51,6 +52,7 @@ namespace DatingApp.API
                  opt.SerializerSettings.ReferenceLoopHandling=ReferenceLoopHandling.Ignore;
                 
              });
+             services.AddScoped<LogUserActivity>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

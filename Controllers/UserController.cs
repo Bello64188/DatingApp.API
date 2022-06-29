@@ -1,15 +1,21 @@
+using System.Linq;
 namespace Name.Controllers
 {
+    using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using AutoMapper;
+    using DatingApp.API;
+    using DatingApp.API.Configuration.Filter;
     using DatingApp.API.Data;
     using DatingApp.API.IGenericRepository;
     using DatingApp.API.Models;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
-    
+    using Newtonsoft.Json;
+
+    [ServiceFilter(typeof(LogUserActivity))]
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
@@ -26,10 +32,18 @@ namespace Name.Controllers
         [HttpGet(Name ="GetUsers")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         
-        public async Task<IActionResult> GetUsers()
+        public async Task<IActionResult> GetUsers([FromQuery]UserParams userParams)
         {
-            var users= await _repository.GetUsers();
+            var currentId = User.Claims.FirstOrDefault(c=>c.Type.Equals("id",StringComparison.OrdinalIgnoreCase))?.Value;
+            var userfromrepo = await _repository.GetUser(currentId);
+            userParams.UserId=currentId;
+            if (string.IsNullOrEmpty(userParams.Gender))
+            {
+                userParams.Gender= userfromrepo.gender.ToLower() == "male" ? "female": "male";
+            }
+            var users= await _repository.GetUsers(userParams);
             var usersMap = _map.Map<IList<UserListsDto>>(users);
+            Response.AddPagination(users.CurrentPage,users.PageSize,users.TotalCount,users.TotalPage);
             return Ok(usersMap);
         }
         [HttpGet("{id}",Name ="GetUser")]

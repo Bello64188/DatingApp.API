@@ -57,7 +57,8 @@ namespace DatingApp.API.Controllers
                 return BadRequest(ModelState);
             }
             // await _userManager.AddToRolesAsync(user,userDTO.Roles);
-            return Accepted();
+            var returnToUser = _map.Map<UsersDetailsDTO>(user);
+            return CreatedAtRoute("GetUser", new {controller="User", id = user.Id},returnToUser); 
         }
 
         [HttpPost("login")]

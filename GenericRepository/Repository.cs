@@ -1,6 +1,8 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DatingApp.API.Configuration.Filter;
 using DatingApp.API.Data;
 using DatingApp.API.IGenericRepository;
 using Microsoft.EntityFrameworkCore;
@@ -48,13 +50,7 @@ namespace DatingApp.API.GenericRepository
         {
              var user = await _context.UserDatas.Include(p=>p.photos).FirstOrDefaultAsync(i=>i.Email==email);
             return user;
-        }
-
-        public async Task<IEnumerable<UserData>> GetUsers()
-        {
-          var users=await _context.UserDatas.Include(p=>p.photos).ToListAsync();
-          return users;
-        }
+        }       
 
         public async Task<bool> SaveAll()
         {
@@ -75,6 +71,38 @@ namespace DatingApp.API.GenericRepository
 
             }
             return user;
+        }
+
+        public async Task<PageList<UserData>> GetUsers(UserParams userParams)
+        {
+           var users= _context.UserDatas.Include(p=>p.photos).OrderByDescending(u=>u.lastActive).AsQueryable();
+           #region "filtering"
+            users = users.Where(u=>u.Id != userParams.UserId);
+           users = users.Where(g=>g.gender==userParams.Gender);
+           if (userParams.MinAge!=18 || userParams.MaxAge!=99)
+           {
+            DateTime maxDob = DateTime.Today.AddYears(-userParams.MinAge);
+            DateTime minDob = DateTime.Today.AddYears(-userParams.MaxAge-1);
+            users=users.Where(u=>u.dateOfBirth>=minDob 
+            && u.dateOfBirth <= maxDob);
+           }
+           #endregion "filtering"
+           #region "sorting"
+           if (!string.IsNullOrEmpty(userParams.OrderBy))
+           {
+              switch (userParams.OrderBy.ToLower())
+              {
+                case "created":
+                users.OrderByDescending(u=>u.created);
+                    break;
+                default:
+                users.OrderByDescending(u=>u.lastActive);
+                    break;
+              }
+              
+           }
+           #endregion "sorting"
+          return await PageList<UserData>.CreateAsync(users,userParams.PageNumber,userParams.PageSize);
         }
     }
 }
