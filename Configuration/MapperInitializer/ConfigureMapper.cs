@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using System.ComponentModel;
 using System.Linq;
 using AutoMapper;
@@ -32,6 +33,12 @@ namespace DatingApp.API.Configuration.MapperInitializer
             CreateMap<UpdateDTO,UserData>();
             CreateMap<PhotoForCreationDTO, Photo>();
             CreateMap<Photo,PhotoForReturnDTO>();
+            CreateMap<MessageForCreateDto, Message>().ReverseMap();
+            CreateMap<Message, MessageToReturn>()
+            .ForMember(m=>m.senderPhotoUrl, 
+            opt=>opt.MapFrom(m=>m.sender.photos.FirstOrDefault(i=>i.isMain).url))
+            .ForMember(m=>m.recipientPhotoUrl, 
+            opt=>opt.MapFrom(m=>m.recipient.photos.FirstOrDefault(i=>i.isMain).url));
         }
     }
 }

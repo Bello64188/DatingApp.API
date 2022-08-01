@@ -1,7 +1,8 @@
-using System.Collections.Generic;
 namespace DatingApp.API.Configuration.Filter
 {
-  public class UserParams
+    
+
+public class MessageParams
 {
     public int PageNumber { get; set; }=1;
     private int pageSize=10;
@@ -13,19 +14,8 @@ namespace DatingApp.API.Configuration.Filter
 
     private const int MaxPageSize =50;
     public string UserId { get; set; }   
-    
-    public int MinAge { get; set; } = 18;
-    public int MaxAge { get; set; }= 99;
-    public string Gender { get; set; }   
-    
-    public string OrderBy { get; set; }
-    public bool Likers { get; set; } = false;
-    
-    public bool Likees { get; set; } = false;
+    public string MessageContainer { get; set; } = "unread";
     
     
-    
-    
-    
-}  
+}
 }

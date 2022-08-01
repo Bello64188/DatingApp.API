@@ -16,6 +16,11 @@ namespace DatingApp.API.IGenericRepository
          void Update(T entity);
          Task<Photo> GetPhoto(int id);
          Task<Photo> GetMainPhotoForUser(string userid);
+         Task<Like> GetLike(string userid, string recipientid);
+         Task<Message> GetMessage(int  id);
+         Task<PageList<Message>> GetMessageForUser(MessageParams messageParams);
+         Task<IEnumerable<Message>> GetMessageThread(string userid, string recipientid);     
+            
          Task<bool>  SaveAll();
     }
 }

@@ -22,11 +22,13 @@ namespace Name.Controllers
     public class UserController : ControllerBase
     {
         private readonly IRepository<UserData> _repository;
+        private readonly IRepository<Like> _likeRepo;
         private readonly IMapper _map;
 
-        public UserController(IRepository<UserData> repository, IMapper mapper){ 
+        public UserController(IRepository<UserData> repository, IMapper mapper,IRepository<Like> likeRepo){ 
             _repository = repository;
             _map=mapper;
+            _likeRepo=likeRepo;
             }
 
         [HttpGet(Name ="GetUsers")]
@@ -43,6 +45,7 @@ namespace Name.Controllers
             }
             var users= await _repository.GetUsers(userParams);
             var usersMap = _map.Map<IList<UserListsDto>>(users);
+            System.Console.WriteLine(usersMap);
             Response.AddPagination(users.CurrentPage,users.PageSize,users.TotalCount,users.TotalPage);
             return Ok(usersMap);
         }
@@ -73,5 +76,29 @@ namespace Name.Controllers
            await _repository.SaveAll();
            return NoContent();
         }
+
+        [HttpPost("{id}/like/{recipientId}")]
+        public async Task<IActionResult> UserLikes(string id, string recipientId)
+        {
+                if(id!= User.Claims.FirstOrDefault(c=>c.Type.Equals("id",StringComparison.OrdinalIgnoreCase)).Value)     
+               
+                return Unauthorized();
+               
+                var like = await _likeRepo.GetLike(id,recipientId);
+                if(like!=null)
+                return BadRequest("You have already like before");
+                if(recipientId==null)
+                return NotFound("cloud'not find user to like.");
+                like = new Like{
+                    likerId=id,
+                    likeeId=recipientId                
+                };
+                _likeRepo.Add(like);
+                if (await _repository.SaveAll())
+                {
+                    return Ok();
+                }
+                return BadRequest("Could't like Each Order");
+        }     
 }
 }
