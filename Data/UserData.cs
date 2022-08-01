@@ -26,6 +26,11 @@ namespace DatingApp.API.Data
         public string interests { get; set; }
         public string city { get; set; }
         public string country { get; set; }
+        public ICollection<Like> Likees { get; set; }
+        public ICollection<Like> Likers { get; set; }
+        
+        public ICollection<Message> MessageSent { get; set; }
+        public ICollection<Message> MessageReceived { get; set; }        
         
         [NotMapped]
         public ICollection<string> Roles { get; set; }
